@@ -21,6 +21,15 @@ drake_cc_library(
 )
 
 drake_cc_library(
+    name = "atlas_constants",
+    srcs = ["atlas_constants.cc"],
+    hdrs = ["atlas_constants.h"],
+    deps = [
+        "//common:essential",
+    ],
+)
+
+drake_cc_library(
     name = "robot_state_decoder",
     srcs = ["robot_state_decoder.cc"],
     hdrs = ["robot_state_decoder.h"],
@@ -65,6 +74,7 @@ drake_cc_binary(
     deps = [
         ":robot_state_decoder",
         ":valkyrie_constants",
+        ":atlas_constants",
         "//common:essential",
         "//common:find_resource",
         "//lcm",
@@ -95,12 +105,15 @@ drake_cc_library(
 
 drake_cc_library(
     name = "valkyrie_simulator",
-    hdrs = ["valkyrie_simulator.h"],
+    hdrs = ["valkyrie_simulator.h",
+            "atlas_simulator.h",
+    ],
     deps = [
         ":actuator_effort_to_rigid_body_plant_input_converter",
         ":robot_command_to_desired_effort_converter",
         ":robot_state_encoder",
         ":valkyrie_constants",
+        ":atlas_constants",
         "//common:find_resource",
         "//lcm",
         "//lcmtypes:contact_info_for_viz",
@@ -125,6 +138,52 @@ drake_cc_binary(
     srcs = ["valkyrie_simulation.cc"],
     data = [":models"],
     deps = [":valkyrie_simulator"],
+)
+
+drake_cc_binary(
+    name = "atlas_simulation",
+    srcs = ["atlas_simulation.cc"],
+    data = [":models"],
+    deps = [":valkyrie_simulator"],
+)
+
+drake_cc_library(
+  name = "box_deps",
+  hdrs = ["box.h"],
+  data = [
+      "test/valkyrie.alias_groups",
+      "test/valkyrie.id_controller_config",
+  ],
+  deps = [
+      ":robot_state_decoder",
+      ":valkyrie_constants",
+      ":atlas_constants",
+      "//common",
+      "//common:find_resource",
+      "//lcm",
+      "//multibody:kinematics_cache",
+      "//multibody:rigid_body_tree",
+      "//multibody/joints",
+      "//multibody/parsers",
+      "//systems/framework:diagram",
+      "//systems/framework:leaf_system",
+      "//systems/lcm",
+      "//systems/lcm:lcm_driven_loop",
+      "//util",
+      "@lcmtypes_bot2_core",
+      "@lcmtypes_robotlocomotion",
+      "//systems/controllers/qp_inverse_dynamics:robot_kinematic_state",
+      "//systems/controllers/plan_eval:generic_plan",
+      "//systems/controllers/qp_inverse_dynamics:param_parser",
+      "//systems/controllers/qp_inverse_dynamics:qp_output_translator_system",
+  ],
+)
+
+drake_cc_binary(
+    name = "box",
+    srcs = ["box.cc"],
+    data = [":models"],
+    deps = [":box_deps"],
 )
 
 # === test/ ===
