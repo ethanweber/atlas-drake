@@ -44,9 +44,9 @@ void Box::handle_message(const lcm::ReceiveBuffer* rbuf, const std::string& chan
   com_ = state_.get_com();
 
   left_foot_ = translator_.get_robot().CalcFramePoseInWorldFrame(state_.get_cache(),
-    *translator_.get_robot().findFrame("l_foot"));
+    *translator_.get_robot().findFrame("l_foot_sole"));
   right_foot_ = translator_.get_robot().CalcFramePoseInWorldFrame(state_.get_cache(),
-    *translator_.get_robot().findFrame("r_foot"));
+    *translator_.get_robot().findFrame("r_foot_sole"));
 
   std::vector<Eigen::Isometry3d> desired_position;
   std::vector<Vector6<double>> desired_velocity;
@@ -84,12 +84,12 @@ void Box::compute_body_info() {
   paramset.LoadFromFile(controller_config, alias_groups);
 
   QpInput input = paramset.MakeQpInput({"feet"},            /* contacts */
-                                       {"r_hand", "pelvis", "mtorso"}, /* tracked bodies*/
+                                       {"right_palm", "pelvis", "torso"}, /* tracked bodies*/
                                        alias_groups);
 
   const RigidBody<double>& pelvis = *alias_groups.get_body("pelvis");
-  const RigidBody<double>& torso = *alias_groups.get_body("mtorso");
-  const RigidBody<double>& right_palm = *alias_groups.get_body("r_hand");
+  const RigidBody<double>& torso = *alias_groups.get_body("torso");
+  const RigidBody<double>& right_palm = *alias_groups.get_body("right_palm");
 
   Vector3<double> Kp_com, Kd_com;
   VectorX<double> Kp_q, Kd_q;
@@ -108,27 +108,27 @@ void Box::compute_body_info() {
 
 
   // -----------------pelvis-----------------------
- //  Isometry3<double> desired_pelvis_pose;
- //  desired_pelvis_pose.matrix() <<
- //  0.999904,   0.0138047, -0.00143103, -0.00795848,
- // -0.0137794,    0.99977,   0.0164094,  0.00130671,
- // 0.00165722,  -0.0163881,    0.999864,     1.01544,
- //          0,           0,           0,           1;
+  Isometry3<double> desired_pelvis_pose;
+  desired_pelvis_pose.matrix() <<
+  0.999904,   0.0138047, -0.00143103, -0.00795848,
+ -0.0137794,    0.99977,   0.0164094,  0.00130671,
+ 0.00165722,  -0.0163881,    0.999864,     1.01544,
+          0,           0,           0,           1;
 
    //  0.999904,   0.0138047, -0.00143103, -0.00795848,
    // -0.0137794,    0.99977,   0.0164094,  0.00130671,
    // 0.00165722,  -0.0163881,    0.999864,     1.01544,
    //          0,           0,           0,           1;
 
-  // Vector6<double> desired_pelvis_vel;
-  // desired_pelvis_vel <<
-  // 0.0,0.0,0.0,
-  // 0.0,0.0,0.0;
+  Vector6<double> desired_pelvis_vel;
+  desired_pelvis_vel <<
+  0.0,0.0,0.0,
+  0.0,0.0,0.0;
 
-  auto desired_pelvis_pose = ComputeBodyPose(state_, pelvis);
-  std::cout << desired_pelvis_pose.matrix() << std::endl;
-  auto desired_pelvis_vel = ComputeBodyVelocity(state_, pelvis);
-  std::cout << desired_pelvis_vel.matrix() << std::endl;
+  // auto desired_pelvis_pose = ComputeBodyPose(state_, pelvis);
+  // std::cout << desired_pelvis_pose.matrix() << std::endl;
+  // auto desired_pelvis_vel = ComputeBodyVelocity(state_, pelvis);
+  // std::cout << desired_pelvis_vel.matrix() << std::endl;
 
   CartesianSetpoint<double> pelvis_PDff(
       desired_pelvis_pose, desired_pelvis_vel,
@@ -167,35 +167,35 @@ void Box::compute_body_info() {
   // // -----------------torso-----------------------
 
   // -----------------right_palm-----------------------
- //  Isometry3<double> desired_right_palm_pose;
- //  desired_right_palm_pose.matrix() <<
- //  -0.0956289,  -0.479053,   0.872561,  0.0501593,
- //    0.9483,   0.222654,   0.226171,  -0.422336,
- // -0.302627,   0.849078,   0.432994,   0.774994,
- //         0,          0,          0,          1;
+  Isometry3<double> desired_right_palm_pose;
+  desired_right_palm_pose.matrix() <<
+  -0.0956289,  -0.479053,   0.872561,  0.0501593,
+    0.9483,   0.222654,   0.226171,  -0.422336,
+ -0.302627,   0.849078,   0.432994,   0.774994,
+         0,          0,          0,          1;
 
   //  -0.0956289,  -0.479053,   0.872561,  0.0501593,
   //    0.9483,   0.222654,   0.226171,  -0.422336,
   // -0.302627,   0.849078,   0.432994,   1.774994, // randomly changed the last value here from 0.774994
   //         0,          0,          0,          1;
 
-  // Vector6<double> desired_right_palm_vel;
-  // desired_right_palm_vel <<
-  // 0.0,0.0,0.0,
-  // 0.0,0.0,0.0;
+  Vector6<double> desired_right_palm_vel;
+  desired_right_palm_vel <<
+  0.0,0.0,0.0,
+  0.0,0.0,0.0;
 
   // auto desired_right_palm_pose = ComputeBodyPose(state_, right_palm);
   // std::cout << desired_right_palm_pose.matrix() << std::endl;
   // auto desired_right_palm_vel = ComputeBodyVelocity(state_, right_palm);
   // std::cout << desired_right_palm_vel.matrix() << std::endl;
 
-  // CartesianSetpoint<double> right_palm_PDff(
-  //     desired_right_palm_pose, desired_right_palm_vel,
-  //     Vector6<double>::Zero(), Kp_right_palm, Kd_right_palm);
-  // input.mutable_desired_body_motions().at(right_palm.get_name()).mutable_values() =
-  //     right_palm_PDff.ComputeTargetAcceleration(
-  //       ComputeBodyPose(state_, right_palm),
-  //       ComputeBodyVelocity(state_, right_palm));
+  CartesianSetpoint<double> right_palm_PDff(
+      desired_right_palm_pose, desired_right_palm_vel,
+      Vector6<double>::Zero(), Kp_right_palm, Kd_right_palm);
+  input.mutable_desired_body_motions().at(right_palm.get_name()).mutable_values() =
+      right_palm_PDff.ComputeTargetAcceleration(
+        ComputeBodyPose(state_, right_palm),
+        ComputeBodyVelocity(state_, right_palm));
   // -----------------right_palm-----------------------
 
 
