@@ -98,6 +98,14 @@ namespace solvers {
  *    <td align="center">&diams;</td>
  *    <td align="center">&diams;</td>
  * </tr>
+ * <tr><td> <a href="https://github.com/oxfordcontrol/osqp">
+ *    OSQP</a></td>
+ *    <td align="center">&diams;</td>
+ *    <td align="center">&diams;</td>
+ *    <td></td>
+ *    <td></td>
+ *    <td></td>
+ * </tr>
  * </table>
  *
  * <b>Mixed-Integer Convex Optimization</b>
@@ -291,10 +299,10 @@ class MathematicalProgram {
 
   /// The optimal cost is +∞ when the problem is globally infeasible.
   static constexpr double kGlobalInfeasibleCost =
-    std::numeric_limits<double>::infinity();
+      std::numeric_limits<double>::infinity();
   /// The optimal cost is -∞ when the problem is unbounded.
   static constexpr double kUnboundedCost =
-    -std::numeric_limits<double>::infinity();
+      -std::numeric_limits<double>::infinity();
 
   MathematicalProgram();
   virtual ~MathematicalProgram() {}
@@ -2243,6 +2251,17 @@ class MathematicalProgram {
   int FindDecisionVariableIndex(const symbolic::Variable& var) const;
 
   /**
+   * Returns the indices of the decision variables. Internally the solvers
+   * thinks all variables are stored in an array, and it acceses each individual
+   * variable using its index. This index is used when adding constraints
+   * and costs for each solver.
+   * @pre{@p vars are decision variables in the mathematical program, otherwise
+   * this function throws a runtime error.}
+   */
+  std::vector<int> FindDecisionVariableIndices(
+      const Eigen::Ref<const VectorXDecisionVariable>& vars) const;
+
+  /**
    * Gets the solution of an Eigen matrix of decision variables.
    * @tparam Derived An Eigen matrix containing Variable.
    * @param var The decision variables.
@@ -2289,6 +2308,37 @@ class MathematicalProgram {
    * Gets the value of a single decision variable.
    */
   double GetSolution(const symbolic::Variable& var) const;
+
+  /**
+   * Evaluates the value of some binding, for some input value for all
+   * decision variables.
+   * @param binding A Binding whose variables are decision variables in this
+   * program.
+   * @param prog_var_vals The value of all the decision variables in this
+   * program. @throw a logic error if the size does not match.
+   */
+  template <typename C, typename DerivedX>
+  typename std::enable_if<is_eigen_vector<DerivedX>::value,
+                          VectorX<typename DerivedX::Scalar>>::type
+  EvalBinding(const Binding<C>& binding,
+              const Eigen::MatrixBase<DerivedX>& prog_var_vals) const {
+    using Scalar = typename DerivedX::Scalar;
+    if (prog_var_vals.rows() != num_vars()) {
+      std::ostringstream oss;
+      oss << "The input binding variable is not in the right size. Expects "
+          << num_vars() << " rows, but it actually has " << prog_var_vals.rows()
+          << " rows.\n";
+      throw std::logic_error(oss.str());
+    }
+    VectorX<Scalar> binding_x(binding.GetNumElements());
+    VectorX<Scalar> binding_y(binding.constraint()->num_outputs());
+    for (int i = 0; i < static_cast<int>(binding.GetNumElements()); ++i) {
+      binding_x(i) =
+          prog_var_vals(FindDecisionVariableIndex(binding.variables()(i)));
+    }
+    binding.constraint()->Eval(binding_x, binding_y);
+    return binding_y;
+  }
 
   /**
    * Evaluate the constraint in the Binding at the solution value.
@@ -2381,6 +2431,7 @@ class MathematicalProgram {
       equality_constrained_qp_solver_;
   std::unique_ptr<MathematicalProgramSolverInterface> gurobi_solver_;
   std::unique_ptr<MathematicalProgramSolverInterface> mosek_solver_;
+  std::unique_ptr<MathematicalProgramSolverInterface> osqp_solver_;
   std::unique_ptr<MathematicalProgramSolverInterface> scs_solver_;
 
   template <typename T>

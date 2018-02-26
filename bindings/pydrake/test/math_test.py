@@ -1,7 +1,7 @@
 from __future__ import absolute_import, division, print_function
 
 import unittest
-from pydrake._math import BarycentricMesh
+from pydrake.math import BarycentricMesh
 import numpy as np
 
 
@@ -15,10 +15,20 @@ class TestBarycentricMesh(unittest.TestCase):
         self.assertEquals(mesh.get_num_mesh_points(), 4)
         self.assertEquals(mesh.get_num_interpolants(), 3)
         self.assertTrue((mesh.get_mesh_point(0) == [0., 0.]).all())
+        points = mesh.get_all_mesh_points()
+        self.assertEqual(points.shape, (2, 4))
+        self.assertTrue((points[:, 3] == [1., 1.]).all())
         self.assertEquals(mesh.Eval(values, (0, 0))[0], 0)
         self.assertEquals(mesh.Eval(values, (1, 0))[0], 1)
         self.assertEquals(mesh.Eval(values, (0, 1))[0], 2)
         self.assertEquals(mesh.Eval(values, (1, 1))[0], 3)
+
+    def test_weight(self):
+        mesh = BarycentricMesh([{0, 1}, {0, 1}])
+
+        (Ti, T) = mesh.EvalBarycentricWeights((0., 1.))
+        np.testing.assert_equal(Ti, [2, 2, 0])
+        np.testing.assert_almost_equal(T, (1., 0., 0.))
 
     def test_mesh_values_from(self):
         mesh = BarycentricMesh([{0, 1}, {0, 1}])
