@@ -68,28 +68,39 @@ void Box::compute_body_info() {
 
   const RigidBodyTree<double>& robot = translator_.get_robot();
 
+  std::cout << "1" << std::endl;
   std::string alias_groups_config = FindResourceOrThrow(
       "drake/examples/valkyrie/test/"
-      "valkyrie.alias_groups");
+      "atlas.alias_groups");
   std::string controller_config = FindResourceOrThrow(
       "drake/examples/valkyrie/test/"
-      "valkyrie.id_controller_config");
+      "atlas.id_controller_config");
+
+  std::cout << "2" << std::endl;
 
   // KinematicsProperty
   RigidBodyTreeAliasGroups<double> alias_groups(&robot);
   alias_groups.LoadFromFile(alias_groups_config);
 
+  std::cout << "3" << std::endl;
+
   // Controller config
   ParamSet paramset;
   paramset.LoadFromFile(controller_config, alias_groups);
 
+  std::cout << "4" << std::endl;
+
   QpInput input = paramset.MakeQpInput({"feet"},            /* contacts */
-                                       {"l_hand", "r_hand", "pelvis", "mtorso"}, /* tracked bodies*/
+                                       {"right_hand", "left_hand", "pelvis", "torso"}, /* tracked bodies*/
                                        alias_groups);
 
+  std::cout << "5" << std::endl;
+
   const RigidBody<double>& pelvis = *alias_groups.get_body("pelvis");
-  const RigidBody<double>& torso = *alias_groups.get_body("mtorso");
+  const RigidBody<double>& torso = *alias_groups.get_body("torso");
   const RigidBody<double>& right_palm = *alias_groups.get_body("right_hand");
+
+  std::cout << "6" << std::endl;
 
   Vector3<double> Kp_com, Kd_com;
   VectorX<double> Kp_q, Kd_q;
@@ -108,27 +119,35 @@ void Box::compute_body_info() {
 
 
   // -----------------pelvis-----------------------
- //  Isometry3<double> desired_pelvis_pose;
- //  desired_pelvis_pose.matrix() <<
+  Isometry3<double> desired_pelvis_pose;
+  desired_pelvis_pose.matrix() <<
+
+  // valkyrie
  //  0.999904,   0.0138047, -0.00143103, -0.00795848,
  // -0.0137794,    0.99977,   0.0164094,  0.00130671,
  // 0.00165722,  -0.0163881,    0.999864,     1.01544,
  //          0,           0,           0,           1;
 
-   //  0.999904,   0.0138047, -0.00143103, -0.00795848,
-   // -0.0137794,    0.99977,   0.0164094,  0.00130671,
-   // 0.00165722,  -0.0163881,    0.999864,     1.01544,
-   //          0,           0,           0,           1;
+ // atlas
+//  0.999976,  .0000471478,  -0.00689654,   -0.0229481
+// -.0000472858,            1, -.0000198476, -0.000322092,
+// 0.00689654,  .0000201732,     0.999976,       0.8408,
+//        0 ,           0,            0,            1;
 
-  // Vector6<double> desired_pelvis_vel;
-  // desired_pelvis_vel <<
-  // 0.0,0.0,0.0,
-  // 0.0,0.0,0.0;
+       0.999996, -6.29413e-05,     0.002985,   -0.0193097,
+7.40669e-05,     0.999993,  -0.00372721,  -0.00042765,
+-0.00298474,   0.00372741,     0.999989,     0.841459,
+       0,            0,            0,            1;
 
-  auto desired_pelvis_pose = ComputeBodyPose(state_, pelvis);
-  std::cout << desired_pelvis_pose.matrix() << std::endl;
-  auto desired_pelvis_vel = ComputeBodyVelocity(state_, pelvis);
-  std::cout << desired_pelvis_vel.matrix() << std::endl;
+  Vector6<double> desired_pelvis_vel;
+  desired_pelvis_vel <<
+  0.0,0.0,0.0,
+  0.0,0.0,0.0;
+
+  // auto desired_pelvis_pose = ComputeBodyPose(state_, pelvis);
+  // std::cout << desired_pelvis_pose.matrix() << std::endl;
+  // auto desired_pelvis_vel = ComputeBodyVelocity(state_, pelvis);
+  // std::cout << desired_pelvis_vel.matrix() << std::endl;
 
   CartesianSetpoint<double> pelvis_PDff(
       desired_pelvis_pose, desired_pelvis_vel,
@@ -167,22 +186,29 @@ void Box::compute_body_info() {
   // // -----------------torso-----------------------
 
   // -----------------right_palm-----------------------
- //  Isometry3<double> desired_right_palm_pose;
- //  desired_right_palm_pose.matrix() <<
- //  -0.0956289,  -0.479053,   0.872561,  0.0501593,
- //    0.9483,   0.222654,   0.226171,  -0.422336,
- // -0.302627,   0.849078,   0.432994,   0.774994,
- //         0,          0,          0,          1;
-
-  //  -0.0956289,  -0.479053,   0.872561,  0.0501593,
-  //    0.9483,   0.222654,   0.226171,  -0.422336,
-  // -0.302627,   0.849078,   0.432994,   1.774994, // randomly changed the last value here from 0.774994
-  //         0,          0,          0,          1;
-
-  // Vector6<double> desired_right_palm_vel;
-  // desired_right_palm_vel <<
-  // 0.0,0.0,0.0,
-  // 0.0,0.0,0.0;
+//   Isometry3<double> desired_right_palm_pose;
+//   desired_right_palm_pose.matrix() <<
+//  //  -0.0956289,  -0.479053,   0.872561,  0.0501593,
+//  //    0.9483,   0.222654,   0.226171,  -0.422336,
+//  // -0.302627,   0.849078,   0.432994,   0.774994,
+//  //         0,          0,          0,          1;
+//  //
+//  //   -0.0956289,  -0.479053,   0.872561,  0.0501593,
+//  //     0.9483,   0.222654,   0.226171,  -0.422336,
+//  //  -0.302627,   0.849078,   0.432994,   1.774994, // randomly changed the last value here from 0.774994
+//  //          0,          0,          0,          1;
+//
+//
+//  // atlas
+//  -0.397537, -0.398115,  0.826722,  0.178432,
+//  0.887548,  0.061808,   0.45655, -0.406225,
+// -0.232857,  0.915251,  0.328775,  1.707499, // added 1
+//         0,         0,         0,         1;
+//
+//   Vector6<double> desired_right_palm_vel;
+//   desired_right_palm_vel <<
+//   0.0,0.0,0.0,
+//   0.0,0.0,0.0;
 
   // auto desired_right_palm_pose = ComputeBodyPose(state_, right_palm);
   // std::cout << desired_right_palm_pose.matrix() << std::endl;
@@ -199,7 +225,8 @@ void Box::compute_body_info() {
   // -----------------right_palm-----------------------
 
 
-  Vector3<double> desired_com = Vector3<double>(0.0,0.0,0.96);
+  // Vector3<double> desired_com = Vector3<double>(0.0,0.0,0.96);
+  Vector3<double> desired_com = Vector3<double>(0.0,0.0,1.1);
   input.mutable_desired_centroidal_momentum_dot().mutable_values().tail<3>() =
      (Kp_com.array() * (desired_com - com_).array() -
       Kd_com.array() * state_.get_com_velocity().array())
@@ -492,10 +519,16 @@ int box_main() {
 
   auto tree = std::make_unique<RigidBodyTree<double>>();
 
+  // parsers::urdf::AddModelInstanceFromUrdfFileToWorld(
+  //   FindResourceOrThrow(
+  //       "drake/examples/valkyrie/urdf/urdf/"
+  //       "valkyrie_A_sim_drake_one_neck_dof_wide_ankle_rom.urdf"),
+  //     multibody::joints::kRollPitchYaw, tree.get());
+
   parsers::urdf::AddModelInstanceFromUrdfFileToWorld(
     FindResourceOrThrow(
-        "drake/examples/valkyrie/urdf/urdf/"
-        "valkyrie_A_sim_drake_one_neck_dof_wide_ankle_rom.urdf"),
+        "drake/examples/valkyrie/urdf/atlas_urdf/"
+        "atlas_minimal_contact.urdf"),
       multibody::joints::kRollPitchYaw, tree.get());
 
   // std::string alias_groups_config = FindResourceOrThrow(

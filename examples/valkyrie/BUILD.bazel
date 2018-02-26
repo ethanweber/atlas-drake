@@ -153,6 +153,8 @@ drake_cc_library(
   data = [
       "test/valkyrie.alias_groups",
       "test/valkyrie.id_controller_config",
+      "test/atlas.alias_groups",
+      "test/atlas.id_controller_config",
   ],
   deps = [
       ":robot_state_decoder",

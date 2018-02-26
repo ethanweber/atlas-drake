@@ -1,0 +1,99 @@
+joint_group {
+  name: "floating_base"
+  member: "base"
+}
+
+joint_group {
+  name: "left_arm"
+  member: "l_arm_elx"
+  member: "l_arm_ely"
+  member: "l_arm_shx"
+  member: "l_arm_shz"
+  member: "l_arm_mwx"
+  member: "l_arm_uwy"
+  member: "l_arm_lwy"
+}
+
+joint_group {
+  name: "right_arm"
+  member: "r_arm_elx"
+  member: "r_arm_ely"
+  member: "r_arm_shx"
+  member: "r_arm_shz"
+  member: "r_arm_mwx"
+  member: "r_arm_uwy"
+  member: "r_arm_lwy"
+}
+
+joint_group {
+  name: "left_leg"
+  member: "l_leg_akx"
+  member: "l_leg_aky"
+  member: "l_leg_hpx"
+  member: "l_leg_hpy"
+  member: "l_leg_hpz"
+  member: "l_leg_kny"
+}
+
+joint_group {
+  name: "right_leg"
+  member: "r_leg_akx"
+  member: "r_leg_aky"
+  member: "r_leg_hpx"
+  member: "r_leg_hpy"
+  member: "r_leg_hpz"
+  member: "r_leg_kny"
+}
+
+joint_group {
+  name: "neck"
+  member: "neck_ay"
+}
+
+joint_group {
+  name: "back_x"
+  member: "back_bkx"
+}
+
+joint_group {
+  name: "spine"
+  member: "back_bkx"
+  member: "back_bky"
+  member: "back_bkz"
+}
+
+body_group {
+  name: "feet"
+  member: "l_foot"
+  member: "r_foot"
+}
+
+body_group {
+  name: "left_foot"
+  member: "l_foot"
+}
+
+body_group {
+  name: "right_foot"
+  member: "r_foot"
+}
+
+body_group {
+  name: "pelvis"
+  member: "pelvis"
+}
+
+body_group {
+  name: "torso"
+  member: "mtorso"
+}
+
+body_group {
+  name: "right_hand"
+  member: "r_hand"
+}
+
+body_group {
+  name: "left_hand"
+  member: "l_hand"
+}

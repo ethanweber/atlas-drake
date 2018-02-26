@@ -12,7 +12,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://valkyrie/urdf/atlas_urdfmeshes/r_clav.obj"/>
+        <mesh filename="package://valkyrie/urdf/atlas)umeshes/r_clav.obj"/>
       </geometry>
     </visual>
     <collision>
