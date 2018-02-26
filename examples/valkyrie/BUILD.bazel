@@ -160,7 +160,7 @@ drake_cc_library(
       ":atlas_constants",
       "//common",
       "//common:find_resource",
-      "//lcm",
+      "@lcm",
       "//multibody:kinematics_cache",
       "//multibody:rigid_body_tree",
       "//multibody/joints",

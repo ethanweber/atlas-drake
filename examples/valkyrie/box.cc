@@ -84,12 +84,12 @@ void Box::compute_body_info() {
   paramset.LoadFromFile(controller_config, alias_groups);
 
   QpInput input = paramset.MakeQpInput({"feet"},            /* contacts */
-                                       {"r_hand", "pelvis", "mtorso"}, /* tracked bodies*/
+                                       {"l_hand", "r_hand", "pelvis", "mtorso"}, /* tracked bodies*/
                                        alias_groups);
 
   const RigidBody<double>& pelvis = *alias_groups.get_body("pelvis");
   const RigidBody<double>& torso = *alias_groups.get_body("mtorso");
-  const RigidBody<double>& right_palm = *alias_groups.get_body("r_hand");
+  const RigidBody<double>& right_palm = *alias_groups.get_body("right_hand");
 
   Vector3<double> Kp_com, Kd_com;
   VectorX<double> Kp_q, Kd_q;
