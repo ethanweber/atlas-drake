@@ -42,3 +42,11 @@ To view or use the original MATLAB implementation of Valkyrie you may use this
 tag:
 
 https://github.com/RobotLocomotion/drake/tree/last_sha_with_original_matlab/drake/examples/Valkyrie
+
+# Box Code - Ethan Weber
+
+- box_atlas
+This code is usable and simple. In the box_atlas.h file, there are some user-modified variables. By editing the names of bodies that correspond to the correct alias groups file (in this case `atlas.alias_groups`), you can specify the string names by editing one of the private variable names. The program will use this specified data to publish the x,y,z position and velocities over the robot_state_t LCM type. It's called box_atlas because we only care about a few points on the robot. The center of mass (specified as the x,y,z values in the pose translation component) and the specified bodies.
+
+- box
+This file is not very clean, but it contains all the necessary code to create QP inputs and control any robot with a valid URDF file. The box.cc and box.h files are used with the box binary (`bazel run --config gurobi box`). This works to specify some controls, but I didn't finish this development for what was needed. It could easily be picked up for later use with the current drake controller.

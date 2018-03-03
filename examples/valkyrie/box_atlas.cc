@@ -8,7 +8,7 @@ namespace valkyrie {
 using systems::controllers::qp_inverse_dynamics::RobotKinematicState;
 using systems::controllers::qp_inverse_dynamics::ParamSet;
 
-// this function pushes all the bodies that are to be tracked
+// this is the constructor
 Box::Box(const RigidBodyTree<double>& tree, lcm::LCM& lcm) :
   translator_(tree),
   lcm_(lcm),
@@ -21,11 +21,6 @@ Box::Box(const RigidBodyTree<double>& tree, lcm::LCM& lcm) :
         "drake/examples/valkyrie/test/"
         "atlas.alias_groups");
     alias_groups_.LoadFromFile(alias_groups_config);
-
-    // bodies_.push_back(alias_groups_.get_body("left_foot"));
-    // bodies_.push_back(alias_groups_.get_body("right_foot"));
-    // bodies_.push_back(alias_groups_.get_body("left_hand"));
-    // bodies_.push_back(alias_groups_.get_body("right_hand"));
 }
 
 Box::~Box(){}
@@ -44,22 +39,8 @@ void Box::handle_message(const lcm::ReceiveBuffer* rbuf, const std::string& chan
   translator_.DecodeMessageKinematics(*msg, q_, v_);
   state_.UpdateKinematics(q_,v_);
   com_ = state_.get_com();
-
-  // left foot
-  // const RigidBody<double>& l_foot = alias_groups_.get_body("left_foot");
-  // left_foot_ = ComputeBodyPose(state_, l_foot);
-  // // right foot
-  // const RigidBody<double>& r_foot = *alias_groups_.get_body("right_foot");
-  // right_foot_ = ComputeBodyPose(state_, r_foot);
-  // // left hand
-  // const RigidBody<double>& l_hand = *alias_groups_.get_body("left_hand");
-  // left_hand_ = ComputeBodyPose(state_, l_hand);
-  // // right hand
-  // const RigidBody<double>& r_hand = *alias_groups_.get_body("right_hand");
-  // right_hand_ = ComputeBodyPose(state_, r_hand);
-
-  // can also add values to velocity
-
+  // updates the center of mass and kinematics
+  // then goes on to creating the LCM message
   publish_message();
 }
 
@@ -89,7 +70,7 @@ void Box::publish_message(){
   msg.pose = lcm_position;
 
   // -------------------------------------------------
-  // populate the end effector information
+  // populate the end effector information with position and velocities
   // -----------------------------------------------
 
   // for x,y,z position and x,y,z velocity
@@ -99,7 +80,7 @@ void Box::publish_message(){
   msg.joint_velocity.resize(msg.num_joints);
   msg.joint_effort.resize(msg.num_joints);
 
-  // x,y,z and x,y,z velocity
+  // for using x,y,z position and velocity (no angles)
   for (int i = 0; i < num_bodies_; i++) {
     const RigidBody<double>& body = *alias_groups_.get_body(bodies_[i]);
     // extract just the positions from the matrix in x,y,z order

@@ -62,6 +62,8 @@ class Box {
     // center of mass is always tracked and computed
     Eigen::Vector3d com_;
 
+    // THESE ARE THE LINES THAT NEED TO BE EDITED TO ADD CHANGE THE TRACKED BODIES
+    // ---------------
     // number of bodies and the body groups that should be published
     int num_bodies_ = 4;
     std::string bodies_[4] = {"left_foot", "right_foot", "left_hand", "right_hand"};
@@ -69,6 +71,7 @@ class Box {
     // values that are passed from the bodies over LCM
     int num_prefixes_ = 3;
     std::string prefixes_[3] = {"x_", "y_", "z_"};
+    // ---------------
 
     lcm::LCM lcm_;
     RobotKinematicState<double> state_;
