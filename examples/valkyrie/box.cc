@@ -48,6 +48,9 @@ void Box::handle_message(const lcm::ReceiveBuffer* rbuf, const std::string& chan
   right_foot_ = translator_.get_robot().CalcFramePoseInWorldFrame(state_.get_cache(),
     *translator_.get_robot().findFrame("r_foot"));
 
+  std::cout << left_foot_.matrix() << std::endl;
+  std::cout << left_foot_[0][4] << std::endl;
+
   std::vector<Eigen::Isometry3d> desired_position;
   std::vector<Vector6<double>> desired_velocity;
 

@@ -66,9 +66,9 @@ body_motion {
     kd: 5
     kd: 5
 
-    weight: 1
-    weight: 1
-    weight: 1
+    weight: 0
+    weight: 0
+    weight: 0
     weight: 1
     weight: 1
     weight: 1
@@ -90,9 +90,9 @@ body_motion {
     kd: 5
     kd: 5
 
-    weight: 1
-    weight: 1
-    weight: 1
+    weight: 0
+    weight: 0
+    weight: 0
     weight: 1
     weight: 1
     weight: 1

@@ -181,11 +181,49 @@ drake_cc_library(
   ],
 )
 
+drake_cc_library(
+  name = "box_atlas_deps",
+  hdrs = ["box_atlas.h"],
+  data = [
+      "test/atlas.alias_groups",
+      "test/atlas.id_controller_config",
+  ],
+  deps = [
+      ":robot_state_decoder",
+      ":valkyrie_constants",
+      ":atlas_constants",
+      "//common",
+      "//common:find_resource",
+      "@lcm",
+      "//multibody:kinematics_cache",
+      "//multibody:rigid_body_tree_alias_groups",
+      "//multibody:rigid_body_tree",
+      "//multibody/joints",
+      "//multibody/parsers",
+      "//systems/framework:diagram",
+      "//systems/framework:leaf_system",
+      "//systems/controllers/qp_inverse_dynamics:robot_kinematic_state",
+      "//systems/controllers/qp_inverse_dynamics:param_parser",
+      "//systems/lcm",
+      "//systems/lcm:lcm_driven_loop",
+      "//util",
+      "@lcmtypes_bot2_core",
+      "@lcmtypes_robotlocomotion",
+  ],
+)
+
 drake_cc_binary(
     name = "box",
     srcs = ["box.cc"],
     data = [":models"],
     deps = [":box_deps"],
+)
+
+drake_cc_binary(
+    name = "box_atlas",
+    srcs = ["box_atlas.cc"],
+    data = [":models"],
+    deps = [":box_atlas_deps"],
 )
 
 # === test/ ===
