@@ -39,17 +39,22 @@ void Box::handle_message(const lcm::ReceiveBuffer* rbuf, const std::string& chan
   translator_.DecodeMessageKinematics(*msg, q_, v_);
   state_.UpdateKinematics(q_,v_);
   com_ = state_.get_com();
+  com_velocity_ = state_.get_com_velocity();
   // updates the center of mass and kinematics
   // then goes on to creating the LCM message
   publish_message();
 }
 
 // publish message with center of mass data
-void Box::publish_message(){
+void Box::publish_message()
+{
   bot_core::robot_state_t msg;
   bot_core::position_3d_t lcm_position;
   bot_core::vector_3d_t position_vector;
   bot_core::quaternion_t quaternion_vector;
+  bot_core::twist_t twist;
+  bot_core::vector_3d_t linear_velocity;
+  bot_core::vector_3d_t angular_velocity;
 
   msg.num_joints = 0;
 
@@ -59,7 +64,7 @@ void Box::publish_message(){
   position_vector.z = com_[2];
 
   // set the quaternion orientation
-  quaternion_vector.w = 0.0;
+  quaternion_vector.w = 1.0;
   quaternion_vector.x = 0.0;
   quaternion_vector.y = 0.0;
   quaternion_vector.z = 0.0;
@@ -68,6 +73,18 @@ void Box::publish_message(){
   lcm_position.rotation = quaternion_vector;
 
   msg.pose = lcm_position;
+
+
+  linear_velocity.x = com_velocity_[0];
+  linear_velocity.y = com_velocity_[1];
+  linear_velocity.z = com_velocity_[2];
+  angular_velocity.x = 0.0;
+  angular_velocity.y = 0.0;
+  angular_velocity.z = 0.0;
+
+  twist.linear_velocity = linear_velocity;
+  twist.angular_velocity = angular_velocity;
+  msg.twist = twist;
 
   // -------------------------------------------------
   // populate the end effector information with position and velocities
@@ -97,7 +114,7 @@ void Box::publish_message(){
     }
   }
 
-  lcm_.publish("BOX_VAL_STATE", &msg);
+  lcm_.publish("BOX_ATLAS_STATE", &msg);
   // std::cout << "Published message." << std::endl;
 
 }

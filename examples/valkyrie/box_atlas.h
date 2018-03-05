@@ -61,6 +61,7 @@ class Box {
 
     // center of mass is always tracked and computed
     Eigen::Vector3d com_;
+    Eigen::Vector3d com_velocity_;
 
     // THESE ARE THE LINES THAT NEED TO BE EDITED TO ADD CHANGE THE TRACKED BODIES
     // ---------------
