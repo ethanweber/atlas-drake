@@ -49,6 +49,8 @@ class Box {
     void publish_message();
     Isometry3<double> ComputeBodyPose(RobotKinematicState<double>& state, const RigidBody<double>& body);
     Vector6<double> ComputeBodyVelocity(RobotKinematicState<double>& state, const RigidBody<double>& body);
+    Isometry3<double> ComputeFramePose(RobotKinematicState<double>& state, const RigidBodyFrame<double>& frame);
+    Vector6<double> ComputeFrameVelocity(RobotKinematicState<double>& state, const RigidBodyFrame<double>& frame);
 
   private:
 
@@ -66,8 +68,12 @@ class Box {
     // THESE ARE THE LINES THAT NEED TO BE EDITED TO ADD CHANGE THE TRACKED BODIES
     // ---------------
     // number of bodies and the body groups that should be published
-    int num_bodies_ = 4;
-    std::string bodies_[4] = {"left_foot", "right_foot", "left_hand", "right_hand"};
+    int num_bodies_ = 2;
+    std::string bodies_[2] = {"left_hand", "right_hand"};
+
+    // number of frames and the nameso f those that should be published
+    int num_frames_ = 2;
+    std::string frames_[2] = {"l_foot_sole", "r_foot_sole"};
 
     // values that are passed from the bodies over LCM
     int num_prefixes_ = 3;

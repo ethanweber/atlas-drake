@@ -33,6 +33,14 @@ Vector6<double> Box::ComputeBodyVelocity(RobotKinematicState<double>& state, con
   return state.get_robot().CalcBodySpatialVelocityInWorldFrame(state.get_cache(), body);
 }
 
+Isometry3<double> Box::ComputeFramePose(RobotKinematicState<double>& state, const RigidBodyFrame<double>& frame) {
+  return state.get_robot().CalcFramePoseInWorldFrame(state.get_cache(), frame);
+}
+
+Vector6<double> Box::ComputeFrameVelocity(RobotKinematicState<double>& state, const RigidBodyFrame<double>& frame) {
+  return state.get_robot().CalcFrameSpatialVelocityInWorldFrame(state.get_cache(), frame);
+}
+
 // updates the center of mass, end effector positions, kinematics cache
 void Box::handle_message(const lcm::ReceiveBuffer* rbuf, const std::string& channel, const bot_core::robot_state_t* msg)
 {
@@ -91,7 +99,7 @@ void Box::publish_message()
   // -----------------------------------------------
 
   // for x,y,z position and x,y,z velocity
-  msg.num_joints = num_bodies_*num_prefixes_;
+  msg.num_joints = num_bodies_*num_frames_*num_prefixes_;
   msg.joint_name.resize(msg.num_joints);
   msg.joint_position.resize(msg.num_joints);
   msg.joint_velocity.resize(msg.num_joints);
@@ -111,6 +119,25 @@ void Box::publish_message()
       msg.joint_position[i*num_prefixes_ + j] = position[j];
       msg.joint_velocity[i*num_prefixes_ + j] = velocity[j];
       msg.joint_effort[i*num_prefixes_ + j] = 0.0;
+    }
+  }
+
+  int offset = num_prefixes_*num_bodies_;
+  // repeat with using joints this time
+  // for using x,y,z position and velocity (no angles)
+  for (int i = 0; i < num_frames_; i++) {
+    const RigidBodyFrame<double>& frame = *state_.get_robot().findFrame(frames_[i]);
+    // extract just the positions from the matrix in x,y,z order
+    Vector3<double> position = ComputeFramePose(state_, frame).translation();
+    // std::cout << "POSITION:\n" << position << std::endl;
+    // 3 angular, 3 linear components (extract only the linear components)
+    Vector3<double> velocity = ComputeFrameVelocity(state_, frame).bottomRows(3);
+    // std::cout << "VELOCITY:\n" << velocity << std::endl;
+    for (int j = 0; j < num_prefixes_; j++) {
+      msg.joint_name[offset+i*num_prefixes_ + j] = prefixes_[j] + frames_[i];
+      msg.joint_position[offset+i*num_prefixes_ + j] = position[j];
+      msg.joint_velocity[offset+i*num_prefixes_ + j] = velocity[j];
+      msg.joint_effort[offset+i*num_prefixes_ + j] = 0.0;
     }
   }
 
