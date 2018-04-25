@@ -32,7 +32,7 @@ class TestAll(unittest.TestCase):
         from pydrake.systems.analysis import Simulator
 
         tree = RigidBodyTree(
-            FindResourceOrThrow("drake/examples/pendulum/Pendulum.urdf"))
+            FindResourceOrThrow("drake/examples/pendulum/Cubli.urdf"))
         simulator = Simulator(RigidBodyPlant(tree))
 
     def test_usage_all(self):
@@ -40,7 +40,7 @@ class TestAll(unittest.TestCase):
             FindResourceOrThrow, RigidBodyPlant, RigidBodyTree, Simulator)
 
         tree = RigidBodyTree(
-            FindResourceOrThrow("drake/examples/pendulum/Pendulum.urdf"))
+            FindResourceOrThrow("drake/examples/pendulum/Cubli.urdf"))
         simulator = Simulator(RigidBodyPlant(tree))
 
     def test_usage_all_explicit(self):
@@ -48,7 +48,7 @@ class TestAll(unittest.TestCase):
 
         tree = pydrake.multibody.rigid_body_tree.RigidBodyTree(
             pydrake.common.FindResourceOrThrow(
-                "drake/examples/pendulum/Pendulum.urdf"))
+                "drake/examples/pendulum/Cubli.urdf"))
         simulator = pydrake.systems.analysis.Simulator(
             pydrake.multibody.rigid_body_plant.RigidBodyPlant(tree))
 

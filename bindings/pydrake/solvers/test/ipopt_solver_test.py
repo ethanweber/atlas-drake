@@ -24,6 +24,6 @@ class TestIpoptSolver(unittest.TestCase):
         self.assertTrue(np.allclose(prog.GetSolution(x), x_expected))
 
     def unavailable(self):
-        """Per the BUILD file, this test is only run when IPOPT is disabled."""
+        """Per the BUILD.bazel file, this test is only run when IPOPT is disabled."""
         solver = IpoptSolver()
         self.assertFalse(solver.available())

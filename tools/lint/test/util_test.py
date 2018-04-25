@@ -22,7 +22,7 @@ class UtilTest(unittest.TestCase):
         self.assertTrue('.bazelproject' in relpaths)
         self.assertTrue('setup/ubuntu/16.04/install_prereqs.sh' in relpaths)
         THIRD_PARTY_SOURCES_ALLOWED_TO_BE_FOUND = [
-            "third_party/BUILD.bazel",
+            "third_party/BUILD.bazel.bazel",
             "third_party/README.md",
         ]
         for one_relpath in relpaths:

@@ -8,9 +8,9 @@
 DEFINE_string(
     print_resource_path, "",
     "Given the relative path of a resource within Drake, e.g., "
-    "`drake/examples/pendulum/Pendulum.urdf`, "
+    "`drake/examples/pendulum/Cubli.urdf`, "
     "find the resource and print its absolute path, e.g., "
-    "`/home/user/tmp/drake/examples/pendulum/Pendulum.urdf`");
+    "`/home/user/tmp/drake/examples/pendulum/Cubli.urdf`");
 DEFINE_bool(
     print_resource_root_environment_variable_name, false,
     "Print the name of the environment variable that provides the "

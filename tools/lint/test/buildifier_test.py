@@ -18,7 +18,7 @@ class BuildifierTest(unittest.TestCase):
         return "\n\n".join(result) + "\n"
 
     def _call_buildifier(self, testdata_contents, args):
-        testdata_filename = "tmp/BUILD.bazel"
+        testdata_filename = "tmp/BUILD.bazel.bazel"
         if not os.path.exists("tmp"):
             os.mkdir("tmp")
         with open(testdata_filename, "w") as testdata_file:
@@ -42,10 +42,10 @@ class BuildifierTest(unittest.TestCase):
         self.assertEqual(returncode, 1, output)
         self.assertListEqual(output.splitlines(), [
             "ERROR: buildifier: the required formatting is incorrect",
-            ("ERROR: tmp/BUILD.bazel:1: " +
+            ("ERROR: tmp/BUILD.bazel.bazel:1: " +
              "error: the required formatting is incorrect"),
-            ("ERROR: tmp/BUILD.bazel:1: note: " +
-             "fix via 'bazel-bin/tools/lint/buildifier' 'tmp/BUILD.bazel'"),
+            ("ERROR: tmp/BUILD.bazel.bazel:1: note: " +
+             "fix via 'bazel-bin/tools/lint/buildifier' 'tmp/BUILD.bazel.bazel'"),
             "NOTE: see http://drake.mit.edu/bazel.html#buildifier"
         ])
 

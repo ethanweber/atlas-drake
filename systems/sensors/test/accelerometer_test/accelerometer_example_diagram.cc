@@ -26,7 +26,7 @@ namespace sensors {
 
 AccelerometerExampleDiagram::AccelerometerExampleDiagram() {
   const std::string model_file_name =
-      FindResourceOrThrow("drake/examples/pendulum/Pendulum.urdf");
+      FindResourceOrThrow("drake/examples/pendulum/Cubli.urdf");
   const std::string model_name = "Pendulum";
 
   auto tree = make_unique<RigidBodyTree<double>>();

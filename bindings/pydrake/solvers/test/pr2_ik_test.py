@@ -13,7 +13,7 @@ from pydrake.multibody.rigid_body_tree import (
 from pydrake.solvers import ik
 
 # TODO(eric.cousineau): Use `unittest` (after moving `ik` into `multibody`),
-# declaring this as a drake_py_unittest in the BUILD.bazel file.
+# declaring this as a drake_py_unittest in the BUILD.bazel.bazel file.
 
 
 def load_robot_from_urdf(urdf_file):

@@ -23,7 +23,7 @@ class TestRigidBodyTree(unittest.TestCase):
         # TODO(eric.cousineau): Reduce these tests to only test API, and do
         # simple sanity checks on the numbers.
         tree = RigidBodyTree(FindResourceOrThrow(
-            "drake/examples/pendulum/Pendulum.urdf"))
+            "drake/examples/pendulum/Cubli.urdf"))
         num_q = 7
         num_v = 7
         self.assertEqual(tree.number_of_positions(), num_q)
@@ -81,7 +81,7 @@ class TestRigidBodyTree(unittest.TestCase):
         # Geometric Jacobian.
         # Construct a new tree with a quaternion floating base.
         tree = RigidBodyTree(FindResourceOrThrow(
-            "drake/examples/pendulum/Pendulum.urdf"),
+            "drake/examples/pendulum/Cubli.urdf"),
             floating_base_type=FloatingBaseType.kQuaternion)
         num_q = 8
         num_v = 7
@@ -111,7 +111,7 @@ class TestRigidBodyTree(unittest.TestCase):
 
     def test_frame_api(self):
         tree = RigidBodyTree(FindResourceOrThrow(
-            "drake/examples/pendulum/Pendulum.urdf"))
+            "drake/examples/pendulum/Cubli.urdf"))
         # xyz + rpy
         frame = RigidBodyFrame(
             name="frame_1", body=tree.world(),
@@ -125,14 +125,14 @@ class TestRigidBodyTree(unittest.TestCase):
 
     def test_flat_terrain(self):
         tree = RigidBodyTree(FindResourceOrThrow(
-            "drake/examples/pendulum/Pendulum.urdf"))
+            "drake/examples/pendulum/Cubli.urdf"))
 
         # Test that AddFlatTerrainToWorld is spelled correctly.
         AddFlatTerrainToWorld(tree)
 
     def test_kinematics_com_api(self):
         tree = RigidBodyTree(FindResourceOrThrow(
-            "drake/examples/pendulum/Pendulum.urdf"))
+            "drake/examples/pendulum/Cubli.urdf"))
         num_q = 7
         num_v = 7
         q = np.zeros(num_q)
@@ -158,7 +158,7 @@ class TestRigidBodyTree(unittest.TestCase):
 
     def test_dynamics_api(self):
         urdf_path = FindResourceOrThrow(
-            "drake/examples/pendulum/Pendulum.urdf")
+            "drake/examples/pendulum/Cubli.urdf")
         tree = RigidBodyTree(
             urdf_path, floating_base_type=FloatingBaseType.kRollPitchYaw)
 
@@ -205,7 +205,7 @@ class TestRigidBodyTree(unittest.TestCase):
         # VisualElement and Geometry over to shapes_test while keeping
         # RigidBodyTree and RigidBody visual element extraction here.
         urdf_path = FindResourceOrThrow(
-            "drake/examples/pendulum/Pendulum.urdf")
+            "drake/examples/pendulum/Cubli.urdf")
 
         tree = RigidBodyTree(
             urdf_path,

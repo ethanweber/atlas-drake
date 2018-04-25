@@ -17,7 +17,7 @@ namespace {
 GTEST_TEST(UrdfDynamicsTest, AllTests) {
   auto tree = std::make_unique<RigidBodyTree<double>>();
   parsers::urdf::AddModelInstanceFromUrdfFileToWorld(
-      FindResourceOrThrow("drake/examples/pendulum/Pendulum.urdf"),
+      FindResourceOrThrow("drake/examples/pendulum/Cubli.urdf"),
       multibody::joints::kFixed, tree.get());
 
   systems::RigidBodyPlant<double> rbp(std::move(tree));

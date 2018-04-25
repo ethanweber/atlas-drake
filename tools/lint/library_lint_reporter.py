@@ -29,7 +29,7 @@ def main():
         help=('A cc_library exists with the short_package_name but it '
               'does not use drake_cc_package_library'))
     args = parser.parse_args()
-    build_file_name = args.package_name[2:] + "/BUILD.bazel"
+    build_file_name = args.package_name[2:] + "/BUILD.bazel.bazel"
     short_package_name = args.package_name.split("/")[-1]
 
     return_code = 0

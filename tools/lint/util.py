@@ -12,7 +12,7 @@ def find_all_sources(workspace_name):
     are all of `workspace_name`'s source files, excluding third_party files.
     Because this abuses (escapes from) the Bazel sandbox, this function should
     *only* be used by linter tools and their unit tests.  It is thus given
-    private visibility in our BUILD.bazel file.
+    private visibility in our BUILD.bazel.bazel file.
     """
     # Our outermost `myprogram.runfiles` directory will contain a file named
     # MANIFEST.  Because this py_library declares a `data=[]` dependency on

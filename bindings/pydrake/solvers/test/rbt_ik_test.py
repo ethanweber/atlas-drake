@@ -12,7 +12,7 @@ class TestRBTIK(unittest.TestCase):
     def setUp(self):
         self.r = RigidBodyTree(
             os.path.join(pydrake.getDrakePath(),
-                         "examples/pendulum/Pendulum.urdf"))
+                         "examples/pendulum/Cubli.urdf"))
 
     def testPostureConstraint(self):
         q = -0.9

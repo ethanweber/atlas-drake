@@ -22,7 +22,7 @@ assert runfiles_dir, (
     "This must be called by a script generated using the " +
     "`drake_runfiles_binary` macro.")
 
-# Stub out pydrake (refer to our ./BUILD.bazel comments for rationale).
+# Stub out pydrake (refer to our ./BUILD.bazel.bazel comments for rationale).
 #
 # We add it to PYTHONPATH within the script, rather than `imports = ["stub"]`
 # on the stub py_library, to avoid any other target accidentally pulling in the

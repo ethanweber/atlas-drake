@@ -13,7 +13,7 @@ from pydrake.multibody.rigid_body_tree import RigidBodyTree, FloatingBaseType
 class TestRigidBodyPlant(unittest.TestCase):
     def _make_tree(self):
         urdf_path = FindResourceOrThrow(
-            "drake/examples/pendulum/Pendulum.urdf")
+            "drake/examples/pendulum/Cubli.urdf")
         tree = RigidBodyTree(
                 urdf_path, floating_base_type=FloatingBaseType.kFixed)
         return tree

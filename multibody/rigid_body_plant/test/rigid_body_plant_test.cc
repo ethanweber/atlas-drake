@@ -794,7 +794,7 @@ GTEST_TEST(RigidBodyPlantTest, LinearizePendulumTest) {
   auto tree_ptr = make_unique<RigidBodyTree<double>>();
   drake::parsers::urdf::AddModelInstanceFromUrdfFileToWorld(
       FindResourceOrThrow(
-          "drake/examples/pendulum/Pendulum.urdf"),
+          "drake/examples/pendulum/Cubli.urdf"),
       drake::multibody::joints::kFixed, tree_ptr.get());
 
   RigidBodyPlant<double> pendulum(move(tree_ptr));

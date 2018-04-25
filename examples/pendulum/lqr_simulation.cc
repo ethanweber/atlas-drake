@@ -33,7 +33,7 @@ int DoMain() {
 
   auto tree = std::make_unique<RigidBodyTree<double>>();
   drake::parsers::urdf::AddModelInstanceFromUrdfFileToWorld(
-      FindResourceOrThrow("drake/examples/pendulum/Pendulum.urdf"),
+      FindResourceOrThrow("drake/examples/pendulum/Cubli.urdf"),
       multibody::joints::kFixed, tree.get());
 
   systems::DiagramBuilder<double> builder;

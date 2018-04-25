@@ -14,7 +14,7 @@ from subprocess import Popen, PIPE, STDOUT
 from drake.tools.lint.find_data import find_data
 from drake.tools.lint.util import find_all_sources
 
-# These match data=[] in our BUILD.bazel file.
+# These match data=[] in our BUILD.bazel.bazel file.
 _BUILDIFIER = "external/buildifier/buildifier"
 _TABLES = "tools/lint/buildifier-tables.json"
 
@@ -40,8 +40,8 @@ def _help(command):
     print("")
     print("=== Drake-specific additions ===")
     print("")
-    print("If the --all flag is given, buildifier operates on every BUILD,")
-    print("*.BUILD, *.bazel, and *.bzl file in the tree except third_party.")
+    print("If the --all flag is given, buildifier operates on every BUILD.bazel,")
+    print("*.BUILD.bazel, *.bazel, and *.bzl file in the tree except third_party.")
     print("")
     print("Without '--all', 'files...' are required; stdin cannot be used.")
     return process.returncode
@@ -50,8 +50,8 @@ def _help(command):
 def _find_buildifier_sources(workspace_name):
     """Return a list of all filenames to be covered by buildifier."""
     workspace, sources_relpath = find_all_sources(workspace_name)
-    exact_filenames = ["BUILD", "WORKSPACE"]
-    extensions = ["bazel", "bzl", "BUILD"]
+    exact_filenames = ["BUILD.bazel", "WORKSPACE"]
+    extensions = ["bazel", "bzl", "BUILD.bazel"]
     return [
         os.path.join(workspace, relpath)
         for relpath in sources_relpath

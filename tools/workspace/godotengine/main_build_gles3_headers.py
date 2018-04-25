@@ -8,7 +8,7 @@ import sys
 # See https://github.com/godotengine/godot/blob/master/methods.py.
 from godotengine.methods import build_gles3_headers
 
-# From our BUILD rule, the first argument is an *.h that build_gles3_headers
+# From our BUILD.bazel rule, the first argument is an *.h that build_gles3_headers
 # needs to read in.  Since the path is hard-coded in build_gles3_headers, we
 # can discard it here.
 _ = sys.argv.pop(1)

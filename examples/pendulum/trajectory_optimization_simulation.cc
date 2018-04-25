@@ -102,7 +102,7 @@ int DoMain() {
   lcm::DrakeLcm lcm;
   auto tree = std::make_unique<RigidBodyTree<double>>();
   parsers::urdf::AddModelInstanceFromUrdfFileToWorld(
-      FindResourceOrThrow("drake/examples/pendulum/Pendulum.urdf"),
+      FindResourceOrThrow("drake/examples/pendulum/Cubli.urdf"),
       multibody::joints::kFixed, tree.get());
 
   auto publisher = builder.AddSystem<systems::DrakeVisualizer>(*tree, &lcm);

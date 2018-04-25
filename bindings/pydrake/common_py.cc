@@ -48,7 +48,7 @@ PYBIND11_MODULE(_common_py, m) {
   m.def("FindResourceOrThrow", &FindResourceOrThrow,
         "Attempts to locate a Drake resource named by the given path string. "
         "The path refers to the relative path within the Drake repository, "
-        "e.g., drake/examples/pendulum/Pendulum.urdf. Raises an exception "
+        "e.g., drake/examples/pendulum/Cubli.urdf. Raises an exception "
         "if the resource was not found.",
         py::arg("resource_path"));
   m.def("temp_directory", &temp_directory,
