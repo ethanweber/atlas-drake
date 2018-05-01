@@ -68,12 +68,12 @@ class Box {
     // THESE ARE THE LINES THAT NEED TO BE EDITED TO ADD CHANGE THE TRACKED BODIES
     // ---------------
     // number of bodies and the body groups that should be published
-    int num_bodies_ = 2;
-    std::string bodies_[2] = {"left_hand", "right_hand"};
+    int num_bodies_ = 0;
+    std::string bodies_[0] = {};
 
     // number of frames and the nameso f those that should be published
-    int num_frames_ = 2;
-    std::string frames_[2] = {"l_foot_sole", "r_foot_sole"};
+    int num_frames_ = 4;
+    std::string frames_[4] = {"l_hand_mount", "r_hand_mount", "l_foot_sole", "r_foot_sole"};
 
     // values that are passed from the bodies over LCM
     int num_prefixes_ = 3;

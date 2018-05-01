@@ -53,7 +53,6 @@ void Box::handle_message(const lcm::ReceiveBuffer* rbuf, const std::string& chan
   publish_message();
 }
 
-// publish message with center of mass data
 void Box::publish_message()
 {
   bot_core::robot_state_t msg;
@@ -66,29 +65,30 @@ void Box::publish_message()
 
   msg.num_joints = 0;
 
-  // set the position vector
-  position_vector.x = com_[0];
-  position_vector.y = com_[1];
-  position_vector.z = com_[2];
+  const RigidBody<double>& pelvis = *alias_groups_.get_body("pelvis");
 
-  // set the quaternion orientation
-  quaternion_vector.w = 1.0;
-  quaternion_vector.x = 0.0;
-  quaternion_vector.y = 0.0;
-  quaternion_vector.z = 0.0;
+  Isometry3<double> pelvis_pose = ComputeBodyPose(state_, pelvis);
+  position_vector.x = pelvis_pose.translation()(0);
+  position_vector.y = pelvis_pose.translation()(1);
+  position_vector.z = pelvis_pose.translation()(2);
+  Eigen::Quaternion<double> pelvis_quat = Eigen::Quaternion<double>(pelvis_pose.rotation());
+  quaternion_vector.w = pelvis_quat.w();
+  quaternion_vector.x = pelvis_quat.x();
+  quaternion_vector.y = pelvis_quat.y();
+  quaternion_vector.z = pelvis_quat.z();
 
   lcm_position.translation = position_vector;
   lcm_position.rotation = quaternion_vector;
 
   msg.pose = lcm_position;
 
-
-  linear_velocity.x = com_velocity_[0];
-  linear_velocity.y = com_velocity_[1];
-  linear_velocity.z = com_velocity_[2];
-  angular_velocity.x = 0.0;
-  angular_velocity.y = 0.0;
-  angular_velocity.z = 0.0;
+  Vector6<double> pelvis_velocity = ComputeBodyVelocity(state_, pelvis);
+  angular_velocity.x = pelvis_velocity(0);
+  angular_velocity.y = pelvis_velocity(1);
+  angular_velocity.z = pelvis_velocity(2);
+  linear_velocity.x = pelvis_velocity(3);
+  linear_velocity.y = pelvis_velocity(4);
+  linear_velocity.z = pelvis_velocity(5);
 
   twist.linear_velocity = linear_velocity;
   twist.angular_velocity = angular_velocity;
@@ -99,7 +99,7 @@ void Box::publish_message()
   // -----------------------------------------------
 
   // for x,y,z position and x,y,z velocity
-  msg.num_joints = num_bodies_*num_frames_*num_prefixes_;
+  msg.num_joints = (num_bodies_ + num_frames_) * num_prefixes_;
   msg.joint_name.resize(msg.num_joints);
   msg.joint_position.resize(msg.num_joints);
   msg.joint_velocity.resize(msg.num_joints);
@@ -108,12 +108,19 @@ void Box::publish_message()
   // for using x,y,z position and velocity (no angles)
   for (int i = 0; i < num_bodies_; i++) {
     const RigidBody<double>& body = *alias_groups_.get_body(bodies_[i]);
-    // extract just the positions from the matrix in x,y,z order
-    Vector3<double> position = ComputeBodyPose(state_, body).translation();
-    // std::cout << "POSITION:\n" << position << std::endl;
-    // 3 angular, 3 linear components (extract only the linear components)
-    Vector3<double> velocity = ComputeBodyVelocity(state_, body).bottomRows(3);
-    // std::cout << "VELOCITY:\n" << velocity << std::endl;
+    Isometry3<double> relative_transform = state_.get_robot().relativeTransform(
+      state_.get_cache(),
+      pelvis.get_body_index(),
+      body.get_body_index());
+    Vector3<double> position = relative_transform.translation();
+
+    TwistVector<double> relative_twist = state_.get_robot().relativeTwist(
+      state_.get_cache(),
+      pelvis.get_body_index(),
+      body.get_body_index(),
+      pelvis.get_body_index());
+    Vector3<double> velocity = relative_twist.bottomRows<3>();
+
     for (int j = 0; j < num_prefixes_; j++) {
       msg.joint_name[i*num_prefixes_ + j] = prefixes_[j] + bodies_[i];
       msg.joint_position[i*num_prefixes_ + j] = position[j];
@@ -123,16 +130,24 @@ void Box::publish_message()
   }
 
   int offset = num_prefixes_*num_bodies_;
-  // repeat with using joints this time
   // for using x,y,z position and velocity (no angles)
   for (int i = 0; i < num_frames_; i++) {
     const RigidBodyFrame<double>& frame = *state_.get_robot().findFrame(frames_[i]);
-    // extract just the positions from the matrix in x,y,z order
-    Vector3<double> position = ComputeFramePose(state_, frame).translation();
-    // std::cout << "POSITION:\n" << position << std::endl;
-    // 3 angular, 3 linear components (extract only the linear components)
-    Vector3<double> velocity = ComputeFrameVelocity(state_, frame).bottomRows(3);
-    // std::cout << "VELOCITY:\n" << velocity << std::endl;
+
+    Isometry3<double> relative_transform = state_.get_robot().relativeTransform(
+      state_.get_cache(),
+      pelvis.get_body_index(),
+      frame.get_frame_index());
+
+    Vector3<double> position = relative_transform.translation();
+
+    TwistVector<double> relative_twist = state_.get_robot().relativeTwist(
+      state_.get_cache(),
+      pelvis.get_body_index(),
+      frame.get_frame_index(),
+      pelvis.get_body_index());
+    Vector3<double> velocity = relative_twist.bottomRows<3>();
+
     for (int j = 0; j < num_prefixes_; j++) {
       msg.joint_name[offset+i*num_prefixes_ + j] = prefixes_[j] + frames_[i];
       msg.joint_position[offset+i*num_prefixes_ + j] = position[j];
